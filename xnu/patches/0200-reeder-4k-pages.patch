@@ -31,3 +31,21 @@ index 424e1c0..7b3fb17 100644
  
  #define HAS_GIC_V3                1
  
+diff --git a/osfmk/mach/arm/vm_param.h b/osfmk/mach/arm/vm_param.h
+index c013288..111902d 100644
+--- a/osfmk/mach/arm/vm_param.h
++++ b/osfmk/mach/arm/vm_param.h
+@@ -133,7 +133,12 @@ extern int PAGE_SHIFT_CONST;
+ 
+ /* system-wide values */
+ #define MACH_VM_MIN_ADDRESS_RAW 0x0ULL
+-#if defined(XNU_PLATFORM_MacOSX) || defined(XNU_PLATFORM_DriverKit)
++/*
++ * reeder (4K pages, see pexpert/arm64/SWEET.h): the kernel is built for the
++ * macOS platform, but a 4K-page arm64 pmap nests the commpage in its own L1
++ * (1 GiB) region above the user VA range, so use the iOS layout (A7/A8 era).
++ */
++#if (defined(XNU_PLATFORM_MacOSX) || defined(XNU_PLATFORM_DriverKit)) && !defined(REEDER)
+ #define MACH_VM_MAX_ADDRESS_RAW 0x00007FFFFE000000ULL
+ #else
+ #define MACH_VM_MAX_ADDRESS_RAW 0x0000000FC0000000ULL
